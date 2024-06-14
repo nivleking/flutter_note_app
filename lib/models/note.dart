@@ -9,13 +9,13 @@ class Note {
   final String title;
   @HiveField(2)
   final String content;
-  // @HiveField(3)
-  // final DateTime date;
+  @HiveField(3)
+  final DateTime? date;
 
   Note({
     required this.uuid,
     required this.title,
     required this.content,
-    // required this.date,
+    required this.date,
   });
 }

@@ -1,7 +1,9 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_note_app/models/note.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 class NotePage extends StatefulWidget {
   final String mode;
@@ -18,6 +20,197 @@ class NotePage extends StatefulWidget {
 }
 
 class _NotePageState extends State<NotePage> {
+  late Box<Note> myNotes;
+  late Note note;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
+  final faker = Faker();
+
+  @override
+  void initState() {
+    super.initState();
+    myNotes = Hive.box<Note>('notes');
+    checkMode();
+
+    _contentController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  String getNoteTime() {
+    var noteIndex = myNotes.values.toList().indexWhere(
+          (note) => note.uuid == widget.uuid,
+        );
+    if (noteIndex == -1) return '';
+    var note = myNotes.getAt(noteIndex);
+    if (note != null) {
+      var formatter = DateFormat('yyyy-MM-dd | hh:mm a');
+      var formattedDate = formatter.format(note.date!.toLocal());
+      return formattedDate +
+          ' | ' +
+          note.content.length.toString() +
+          ' characters ';
+    }
+    return '';
+  }
+
+  void checkMode() {
+    if (widget.mode == 'add') {
+    } else {
+      note = myNotes.values.firstWhere((note) => note.uuid == widget.uuid);
+      _titleController.text = note.title;
+      _contentController.text = note.content;
+    }
+  }
+
+  Color selectedColor = Colors.white;
+
+  Future addNote(String title, String content, Color color) async {
+    await myNotes.add(
+      Note(
+        uuid: faker.guid.guid(),
+        title: title,
+        content: content,
+        date: DateTime.now(),
+      ),
+    );
+  }
+
+  Future updateNote(String title, String content, Color color) async {
+    var noteIndex = myNotes.values.toList().indexWhere(
+          (note) => note.uuid == widget.uuid,
+        );
+    if (noteIndex != -1) {
+      await myNotes.putAt(
+        noteIndex,
+        Note(
+          uuid: widget.uuid,
+          title: title,
+          content: content,
+          date: DateTime.now(),
+        ),
+      );
+    }
+  }
+
+  void deleteNote() {
+    var noteIndex = myNotes.values.toList().indexWhere(
+          (note) => note.uuid == widget.uuid,
+        );
+    if (noteIndex != -1) {
+      myNotes.deleteAt(noteIndex);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          widget.mode == 'add' ? 'Add Note' : 'Edit Note',
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          widget.mode == 'add'
+              ? SizedBox()
+              : IconButton(
+                  onPressed: () {
+                    deleteNote();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Note deleted!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    CupertinoIcons.trash,
+                    color: Colors.red,
+                  ),
+                ),
+          IconButton(
+            onPressed: () {
+              showColorPicker();
+            },
+            icon: Icon(
+              CupertinoIcons.layers,
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              CupertinoIcons.checkmark,
+              color: Colors.green,
+            ),
+            onPressed: () {
+              Future<void> noteOperation;
+              if (widget.mode == 'add') {
+                noteOperation = addNote(
+                  _titleController.text,
+                  _contentController.text,
+                  selectedColor,
+                );
+              } else {
+                noteOperation = updateNote(
+                  _titleController.text,
+                  _contentController.text,
+                  selectedColor,
+                );
+              }
+              noteOperation.then((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Note saved!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+                Navigator.pop(context);
+              });
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  getNoteTime(),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(height: 10),
+                CupertinoTextField(
+                  controller: _titleController,
+                  placeholder: "Title",
+                  padding: EdgeInsets.all(10.0),
+                ),
+                SizedBox(height: 10),
+                CupertinoTextField(
+                  controller: _contentController,
+                  padding: EdgeInsets.all(10.0),
+                  maxLines: 30,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void showColorPicker() {
     showModalBottomSheet(
       context: context,
@@ -47,126 +240,11 @@ class _NotePageState extends State<NotePage> {
         );
       },
     ).then((selectedColor) {
-      if (selectedColor != null) {}
+      if (selectedColor != null) {
+        setState(() {
+          this.selectedColor = selectedColor;
+        });
+      }
     });
-  }
-
-  late Box<Note> myNotes;
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    myNotes = Hive.box<Note>('notes');
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final note = myNotes.get(widget.uuid);
-    if (note != null) {
-      _titleController.text = note.title;
-      _contentController.text = note.content;
-    }
-  }
-
-  void addNote(String title, String content) {
-    final note = Note(
-      uuid: DateTime.now().toString(),
-      title: title,
-      content: content,
-    );
-    myNotes.add(note);
-  }
-
-  void editNote(String title, String content, String uuid) {
-    final note = Note(
-      uuid: uuid,
-      title: title,
-      content: content,
-    );
-    myNotes.put(uuid, note);
-  }
-
-  void deleteNote(String uuid) {
-    myNotes.delete(uuid);
-  }
-
-  void getNote(String uuid) {
-    final note = myNotes.get(uuid);
-    _titleController.text = note!.title;
-    _contentController.text = note!.content;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          widget.mode == 'add' ? 'Add Note' : 'Edit Note',
-          style: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              CupertinoIcons.trash,
-              color: Colors.red,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              showColorPicker();
-            },
-            icon: Icon(
-              CupertinoIcons.layers,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              CupertinoIcons.checkmark,
-              color: Colors.green,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "January 1, 2022 | xxx characters",
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.grey,
-                ),
-              ),
-              SizedBox(height: 10),
-              CupertinoTextField(
-                controller: _titleController,
-                placeholder: "Title",
-                padding: EdgeInsets.all(10.0),
-              ),
-              SizedBox(height: 10),
-              CupertinoTextField(
-                controller: _contentController,
-                padding: EdgeInsets.all(10.0),
-                maxLines: 30,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
