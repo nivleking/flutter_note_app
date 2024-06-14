@@ -49,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/note': (context) => NotePage(
               mode: (ModalRoute.of(context)?.settings.arguments as Map)['mode'],
+              uuid: (ModalRoute.of(context)?.settings.arguments as Map)['uuid'],
             ),
       },
     );

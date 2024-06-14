@@ -43,7 +43,7 @@ class LoginPageState extends State<LoginPage> {
       width: 56,
       height: 56,
       textStyle: const TextStyle(
-        fontSize: 20,
+        fontSize: 16,
         color: Color.fromRGBO(30, 60, 87, 1),
         fontWeight: FontWeight.w600,
       ),
@@ -58,7 +58,7 @@ class LoginPageState extends State<LoginPage> {
         title: Text(
           'Input PIN',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -71,7 +71,7 @@ class LoginPageState extends State<LoginPage> {
             const Text(
               'Insert the 6-digit PIN',
               style: TextStyle(
-                fontSize: 20.0,
+                fontSize: 16.0,
                 fontWeight: FontWeight.bold,
               ),
             ),

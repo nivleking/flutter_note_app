@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                 title: Text(
                   'Notes',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -98,9 +98,25 @@ class _HomePageState extends State<HomePage> {
                 snap: false,
                 pinned: true,
                 actions: [
-                  IconButton(
+                  PopupMenuButton<String>(
                     icon: Icon(CupertinoIcons.gear),
-                    onPressed: () {},
+                    onSelected: (value) {
+                      if (value == 'logout') {
+                        Navigator.pushReplacementNamed(context, '/');
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'logout',
+                        child: Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -118,6 +134,7 @@ class _HomePageState extends State<HomePage> {
                         '/note',
                         arguments: {
                           'mode': '',
+                          'uuid': note.uuid,
                         },
                       ),
                       child: Container(
@@ -140,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                             Text(
                               note.title,
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -174,6 +191,7 @@ class _HomePageState extends State<HomePage> {
                 '/note',
                 arguments: {
                   'mode': 'add',
+                  'uuid': '',
                 },
               );
             },
