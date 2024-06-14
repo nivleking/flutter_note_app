@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_note_app/home_page.dart';
-import 'package:flutter_note_app/login_page.dart';
+import 'package:flutter_note_app/models/note.dart';
+import 'package:flutter_note_app/screens/note_page.dart';
+import 'package:flutter_note_app/screens/home_page.dart';
+import 'package:flutter_note_app/screens/login_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(NoteAdapter());
+  await Hive.openBox<Note>('notes');
+
   runApp(const MyApp());
 }
 
@@ -40,6 +47,9 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LoginPage(),
         '/home': (context) => HomePage(),
+        '/note': (context) => NotePage(
+              mode: (ModalRoute.of(context)?.settings.arguments as Map)['mode'],
+            ),
       },
     );
   }
