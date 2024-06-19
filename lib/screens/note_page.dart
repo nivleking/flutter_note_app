@@ -24,7 +24,6 @@ class _NotePageState extends State<NotePage> {
   late Note note;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  final faker = Faker();
 
   @override
   void initState() {

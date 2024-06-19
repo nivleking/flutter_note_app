@@ -4,14 +4,14 @@ import 'package:flutter_note_app/models/pin.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pinput/pinput.dart';
 
-class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  LoginPageState createState() => LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   late final PinTheme defaultPinTheme;
   late final PinTheme focusedPinTheme;
   late final PinTheme submittedPinTheme;
@@ -30,6 +30,20 @@ class LoginPageState extends State<LoginPage> {
     pinBox = Hive.box<Pin>('pins');
   }
 
+  void registerPin(String pin) {
+    pinBox.put(
+      'userPin',
+      Pin(pin: pin),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('PIN is successfully created!'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
   @override
   void dispose() {
     pinController.dispose();
@@ -42,7 +56,6 @@ class LoginPageState extends State<LoginPage> {
     const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
     // const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
-
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
@@ -60,7 +73,7 @@ class LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Input PIN',
+          'Register New PIN',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -73,7 +86,7 @@ class LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const Text(
-              'Insert the 6-digit PIN',
+              'Insert your newly 6-digit PIN',
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
@@ -105,8 +118,12 @@ class LoginPageState extends State<LoginPage> {
                 ),
                 controller: pinController,
                 length: 6,
-                validator: (s) =>
-                    s == pinBox.get('userPin')?.pin ? null : 'Invalid PIN',
+                validator: (s) {
+                  if (s!.length != 6 || s.length == 0) {
+                    return 'PIN must be 6 digits!';
+                  }
+                  return null;
+                },
                 showCursor: true,
                 obscureText: true,
               ),
@@ -114,21 +131,16 @@ class LoginPageState extends State<LoginPage> {
             CupertinoButton(
               color: Colors.blue,
               child: Text(
-                "Validate",
+                "Create",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 focusNode.unfocus();
                 if (formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('PIN is correct!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                  Navigator.pushReplacementNamed(context, '/home');
+                  registerPin(pinController.text);
+                  Navigator.pushReplacementNamed(context, '/login');
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

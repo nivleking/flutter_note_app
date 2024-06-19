@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note_app/models/note.dart';
+import 'package:flutter_note_app/models/pin.dart';
 import 'package:flutter_note_app/screens/note_page.dart';
 import 'package:flutter_note_app/screens/home_page.dart';
 import 'package:flutter_note_app/screens/login_page.dart';
+import 'package:flutter_note_app/screens/register_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(NoteAdapter());
+  Hive.registerAdapter(PinAdapter());
   await Hive.openBox<Note>('notes');
+  await Hive.openBox<Pin>('pins');
 
-  runApp(const MyApp());
+  runApp(
+    MyApp(
+      isFirstTime: Hive.box<Pin>('pins').isEmpty,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isFirstTime;
+  const MyApp({
+    super.key,
+    required this.isFirstTime,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +55,16 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/',
       routes: {
-        '/': (context) => LoginPage(),
+        '/login': (context) => LoginPage(),
+        '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),
         '/note': (context) => NotePage(
               mode: (ModalRoute.of(context)?.settings.arguments as Map)['mode'],
               uuid: (ModalRoute.of(context)?.settings.arguments as Map)['uuid'],
             ),
       },
+      initialRoute: isFirstTime ? '/register' : '/login',
     );
   }
 }
