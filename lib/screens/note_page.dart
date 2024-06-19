@@ -43,10 +43,16 @@ class _NotePageState extends State<NotePage> {
     if (noteIndex == -1) return '';
     var note = myNotes.getAt(noteIndex);
     if (note != null) {
-      var formatter = DateFormat('yyyy-MM-dd | hh:mm a');
+      var formatter = DateFormat('yyyy-MM-dd hh:mm a');
       var formattedDate = formatter.format(note.date!.toLocal());
-      return formattedDate +
-          ' | ' +
+      return 'Created at: ' +
+          formattedDate +
+          '\n' +
+          'Last edit: ' +
+          formatter.format(
+            note.createdAt!.toLocal(),
+          ) +
+          '\n' +
           note.content.length.toString() +
           ' characters ';
     }
@@ -71,6 +77,7 @@ class _NotePageState extends State<NotePage> {
         title: title,
         content: content,
         date: DateTime.now(),
+        createdAt: DateTime.now(),
       ),
     );
   }
@@ -79,14 +86,17 @@ class _NotePageState extends State<NotePage> {
     var noteIndex = myNotes.values.toList().indexWhere(
           (note) => note.uuid == widget.uuid,
         );
+
     if (noteIndex != -1) {
+      var oldNote = myNotes.getAt(noteIndex);
       await myNotes.putAt(
         noteIndex,
         Note(
           uuid: widget.uuid,
           title: title,
           content: content,
-          date: DateTime.now(),
+          date: oldNote?.date != null ? oldNote?.date : DateTime.now(),
+          createdAt: DateTime.now(),
         ),
       );
     }

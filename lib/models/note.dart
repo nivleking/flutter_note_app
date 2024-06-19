@@ -11,11 +11,14 @@ class Note {
   final String content;
   @HiveField(3)
   final DateTime? date;
+  @HiveField(4)
+  final DateTime? createdAt;
 
   Note({
     required this.uuid,
     required this.title,
     required this.content,
     required this.date,
+    required this.createdAt,
   });
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_note_app/components/pin_input.dart';
 import 'package:flutter_note_app/models/pin.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pinput/pinput.dart';
@@ -98,34 +99,9 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             Form(
               key: formKey,
-              child: Pinput(
-                defaultPinTheme: defaultPinTheme,
-                focusedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: focusedBorderColor),
-                  ),
-                ),
-                submittedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    color: fillColor,
-                    borderRadius: BorderRadius.circular(19),
-                    border: Border.all(color: focusedBorderColor),
-                  ),
-                ),
-                errorPinTheme: defaultPinTheme.copyBorderWith(
-                  border: Border.all(color: Colors.redAccent),
-                ),
-                controller: pinController,
-                length: 6,
-                validator: (s) {
-                  if (s!.length != 6 || s.length == 0) {
-                    return 'PIN must be 6 digits!';
-                  }
-                  return null;
-                },
-                showCursor: true,
-                obscureText: true,
+              child: PinInputBox(
+                pinController: pinController,
+                isLogin: false,
               ),
             ),
             CupertinoButton(
