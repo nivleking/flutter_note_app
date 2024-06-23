@@ -9,7 +9,7 @@ class NotePage extends StatefulWidget {
   final String mode;
   final String uuid;
 
-  NotePage({
+  const NotePage({
     super.key,
     required this.mode,
     required this.uuid,
@@ -44,14 +44,13 @@ class _NotePageState extends State<NotePage> {
     var note = myNotes.getAt(noteIndex);
     if (note != null) {
       var formatter = DateFormat('yyyy-MM-dd hh:mm a');
-      var formattedDate = formatter.format(note.date!.toLocal());
+      var formatDateEdit = formatter.format(note.date!.toLocal());
+      var formatDateCreated = formatter.format(note.createdAt!.toLocal());
       return 'Created at: ' +
-          formattedDate +
+          formatDateCreated +
           '\n' +
           'Last edit: ' +
-          formatter.format(
-            note.createdAt!.toLocal(),
-          ) +
+          formatDateEdit +
           '\n' +
           note.content.length.toString() +
           ' characters ';
@@ -68,9 +67,7 @@ class _NotePageState extends State<NotePage> {
     }
   }
 
-  Color selectedColor = Colors.white;
-
-  Future addNote(String title, String content, Color color) async {
+  Future addNote(String title, String content) async {
     await myNotes.add(
       Note(
         uuid: faker.guid.guid(),
@@ -82,7 +79,7 @@ class _NotePageState extends State<NotePage> {
     );
   }
 
-  Future updateNote(String title, String content, Color color) async {
+  Future updateNote(String title, String content) async {
     var noteIndex = myNotes.values.toList().indexWhere(
           (note) => note.uuid == widget.uuid,
         );
@@ -95,8 +92,8 @@ class _NotePageState extends State<NotePage> {
           uuid: widget.uuid,
           title: title,
           content: content,
-          date: oldNote?.date != null ? oldNote?.date : DateTime.now(),
-          createdAt: DateTime.now(),
+          date: DateTime.now(),
+          createdAt: oldNote?.date ?? DateTime.now(),
         ),
       );
     }
@@ -118,14 +115,14 @@ class _NotePageState extends State<NotePage> {
         centerTitle: true,
         title: Text(
           widget.mode == 'add' ? 'Add Note' : 'Edit Note',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
           widget.mode == 'add'
-              ? SizedBox()
+              ? const SizedBox()
               : IconButton(
                   onPressed: () {
                     deleteNote();
@@ -137,21 +134,13 @@ class _NotePageState extends State<NotePage> {
                     );
                     Navigator.pop(context);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     CupertinoIcons.trash,
                     color: Colors.red,
                   ),
                 ),
           IconButton(
-            onPressed: () {
-              showColorPicker();
-            },
-            icon: Icon(
-              CupertinoIcons.layers,
-            ),
-          ),
-          IconButton(
-            icon: Icon(
+            icon: const Icon(
               CupertinoIcons.checkmark,
               color: Colors.green,
             ),
@@ -161,13 +150,11 @@ class _NotePageState extends State<NotePage> {
                 noteOperation = addNote(
                   _titleController.text,
                   _contentController.text,
-                  selectedColor,
                 );
               } else {
                 noteOperation = updateNote(
                   _titleController.text,
                   _contentController.text,
-                  selectedColor,
                 );
               }
               noteOperation.then((_) {
@@ -195,21 +182,28 @@ class _NotePageState extends State<NotePage> {
               children: [
                 Text(
                   getNoteTime(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 10),
+                Text(
+                  'Total characters: ${_contentController.text.length}',
+                  style: const TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 10),
                 CupertinoTextField(
                   controller: _titleController,
                   placeholder: "Title",
-                  padding: EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 CupertinoTextField(
                   controller: _contentController,
-                  padding: EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
                   maxLines: 30,
                 ),
               ],
@@ -220,40 +214,66 @@ class _NotePageState extends State<NotePage> {
     );
   }
 
-  void showColorPicker() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 300,
-          child: GridView.count(
-            crossAxisCount: 5,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10.0,
-              vertical: 20.0,
-            ),
-            children: Colors.accents.map((Color color) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.pop(context, color);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Container(
-                    color: color,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        );
-      },
-    ).then((selectedColor) {
-      if (selectedColor != null) {
-        setState(() {
-          this.selectedColor = selectedColor;
-        });
-      }
-    });
-  }
+  // void showColorPicker() {
+  //   List<String> colors = [
+  //     "white",
+  //     "blue",
+  //     "green",
+  //     "red",
+  //     "yellow",
+  //   ];
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return SizedBox(
+  //         height: 120,
+  //         child: GridView.count(
+  //           crossAxisCount: 5,
+  //           padding: const EdgeInsets.symmetric(
+  //             horizontal: 10.0,
+  //             vertical: 20.0,
+  //           ),
+  //           children: colors.map((String colorName) {
+  //             Color color = Colors.white; // Default to white if not found
+  //             switch (colorName) {
+  //               case "white":
+  //                 color = Colors.white;
+  //                 break;
+  //               case "blue":
+  //                 color = Colors.blue;
+  //                 break;
+  //               case "green":
+  //                 color = Colors.green;
+  //                 break;
+  //               case "red":
+  //                 color = Colors.red;
+  //                 break;
+  //               case "yellow":
+  //                 color = Colors.yellow;
+  //                 break;
+  //             }
+
+  //             return GestureDetector(
+  //               onTap: () {
+  //                 Navigator.pop(context, color);
+  //               },
+  //               child: Padding(
+  //                 padding: const EdgeInsets.all(4.0),
+  //                 child: Container(
+  //                   color: color,
+  //                 ),
+  //               ),
+  //             );
+  //           }).toList(),
+  //         ),
+  //       );
+  //     },
+  //   ).then((selectedColor) {
+  //     if (selectedColor != null) {
+  //       setState(() {
+  //         this.selectedColor = selectedColor as Color;
+  //       });
+  //     }
+  //   });
+  // }
 }

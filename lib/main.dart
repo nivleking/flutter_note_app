@@ -14,8 +14,6 @@ void main() async {
   await Hive.openBox<Note>('notes');
   await Hive.openBox<Pin>('pins');
 
-  Hive.box<Note>('notes').clear();
-
   runApp(
     MyApp(
       isFirstTime: Hive.box<Pin>('pins').isEmpty,

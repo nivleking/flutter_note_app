@@ -54,23 +54,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
-    const fillColor = Color.fromRGBO(243, 246, 249, 0);
-    // const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: const TextStyle(
-        fontSize: 16,
-        color: Color.fromRGBO(30, 60, 87, 1),
-        fontWeight: FontWeight.w600,
-      ),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300, width: 1.5),
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -84,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               'Insert your newly 6-digit PIN',
@@ -93,17 +76,24 @@ class _RegisterPageState extends State<RegisterPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 100.0),
             const Icon(
               CupertinoIcons.lock,
               size: 50.0,
             ),
+            const SizedBox(height: 100.0),
             Form(
               key: formKey,
-              child: PinInputBox(
-                pinController: pinController,
-                isLogin: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: PinInputBox(
+                  pinController: pinController,
+                  isLogin: false,
+                  onPinVerified: (p0) {},
+                ),
               ),
             ),
+            const SizedBox(height: 100.0),
             CupertinoButton(
               color: Colors.blue,
               child: Text(
@@ -126,7 +116,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   );
                 }
               },
-            )
+            ),
+            const SizedBox(height: 100.0),
           ],
         ),
       ),

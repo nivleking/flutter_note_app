@@ -6,11 +6,15 @@ import 'package:pinput/pinput.dart';
 class PinInputBox extends StatelessWidget {
   final TextEditingController pinController;
   final bool isLogin;
+  final bool isDelete;
+  final Function(bool) onPinVerified;
 
   const PinInputBox({
     Key? key,
     required this.pinController,
     required this.isLogin,
+    this.isDelete = false,
+    required this.onPinVerified,
   }) : super(key: key);
 
   @override
@@ -51,7 +55,27 @@ class PinInputBox extends StatelessWidget {
         border: Border.all(color: Colors.redAccent),
       ),
       controller: pinController,
+      autofocus: true,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       length: 6,
+      onCompleted: (value) async {
+        final pinIsValid = value == Hive.box<Pin>('pins').get('userPin')?.pin;
+        await Future.delayed(const Duration(seconds: 1), () {
+          if (isDelete) {
+            onPinVerified(pinIsValid);
+            if (pinIsValid) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('PIN is successfully deleted!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.of(context).pop(true);
+            }
+          }
+        });
+      },
       validator: (s) {
         if (isLogin) {
           return s == Hive.box<Pin>('pins').get('userPin')?.pin

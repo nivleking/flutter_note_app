@@ -53,7 +53,7 @@ class LoginPageState extends State<LoginPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               'Insert the 6-digit PIN',
@@ -62,17 +62,24 @@ class LoginPageState extends State<LoginPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 100.0),
             const Icon(
               CupertinoIcons.lock,
               size: 50.0,
             ),
+            const SizedBox(height: 100.0),
             Form(
               key: formKey,
-              child: PinInputBox(
-                pinController: pinController,
-                isLogin: true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: PinInputBox(
+                  pinController: pinController,
+                  isLogin: true,
+                  onPinVerified: (p0) {},
+                ),
               ),
             ),
+            const SizedBox(height: 100.0),
             CupertinoButton(
               color: Colors.blue,
               child: Text(
@@ -100,7 +107,8 @@ class LoginPageState extends State<LoginPage> {
                   );
                 }
               },
-            )
+            ),
+            const SizedBox(height: 100.0),
           ],
         ),
       ),

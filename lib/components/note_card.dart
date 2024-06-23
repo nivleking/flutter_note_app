@@ -38,20 +38,24 @@ class NoteCard extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 10),
               Text(
                 note.content,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
+                  color: Colors.grey[600],
                 ),
-                maxLines: 3,
+                maxLines: 5,
+                overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 10),
             ],
           ),
           Text(
-            DateFormat('yyyy-MM-dd hh:mm a').format(note.date!),
+            DateFormat('yyyy-MM-dd hh:mm a').format(note.createdAt!),
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey,
