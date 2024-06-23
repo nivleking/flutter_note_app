@@ -11,14 +11,18 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Brightness theme = MediaQuery.of(context).platformBrightness;
+
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme == Brightness.light ? Colors.white : Colors.grey[900]!,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
+            color: theme == Brightness.light
+                ? Colors.grey[300]!
+                : Colors.grey[800]!,
             spreadRadius: 1,
             blurRadius: 1,
             offset: Offset(0, 3),
@@ -46,7 +50,9 @@ class NoteCard extends StatelessWidget {
                 note.content,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: theme == Brightness.light
+                      ? Colors.grey[700]!
+                      : Colors.grey[300]!,
                 ),
                 maxLines: 5,
                 overflow: TextOverflow.ellipsis,

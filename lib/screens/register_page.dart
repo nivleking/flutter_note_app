@@ -39,7 +39,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('PIN is successfully created!'),
+        content: Text(
+          'PIN is successfully created!',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Colors.green,
       ),
     );
@@ -54,6 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness theme = MediaQuery.of(context).platformBrightness;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -64,6 +70,18 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(8.0),
+          child: Divider(
+            height: 0.8,
+            thickness: 0.3,
+            color: theme == Brightness.light
+                ? Colors.grey[300]
+                : Colors.grey[700]!,
+          ),
+        ),
+        backgroundColor:
+            theme == Brightness.light ? Colors.white : Colors.grey[800]!,
       ),
       body: Center(
         child: Column(
@@ -76,12 +94,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 100.0),
+            const SizedBox(height: 81.0),
             const Icon(
               CupertinoIcons.lock,
               size: 50.0,
             ),
-            const SizedBox(height: 100.0),
+            const SizedBox(height: 81.0),
             Form(
               key: formKey,
               child: Padding(
@@ -93,13 +111,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 100.0),
+            const SizedBox(height: 81.0),
             CupertinoButton(
               color: Colors.blue,
               child: Text(
                 "Create",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
               onPressed: () async {
@@ -110,14 +129,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Invalid PIN!'),
+                      content: Text(
+                        'Invalid PIN!',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                       backgroundColor: Colors.red,
                     ),
                   );
                 }
               },
             ),
-            const SizedBox(height: 100.0),
           ],
         ),
       ),

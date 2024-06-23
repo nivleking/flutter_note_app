@@ -110,6 +110,8 @@ class _NotePageState extends State<NotePage> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness theme = MediaQuery.of(context).platformBrightness;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -128,7 +130,12 @@ class _NotePageState extends State<NotePage> {
                     deleteNote();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Note deleted!'),
+                        content: Text(
+                          'Note deleted!',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -160,7 +167,12 @@ class _NotePageState extends State<NotePage> {
               noteOperation.then((_) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Note saved!'),
+                    content: Text(
+                      'Note saved!',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -169,6 +181,18 @@ class _NotePageState extends State<NotePage> {
             },
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(8.0),
+          child: Divider(
+            height: 8.0,
+            color: theme == Brightness.light
+                ? Colors.grey[300]!
+                : Colors.grey[800]!,
+            thickness: 0.3,
+          ),
+        ),
+        backgroundColor:
+            theme == Brightness.light ? Colors.white : Colors.grey[800]!,
       ),
       body: Center(
         child: Padding(
@@ -195,15 +219,49 @@ class _NotePageState extends State<NotePage> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                Divider(
+                  color: theme == Brightness.light
+                      ? Colors.grey[300]!
+                      : Colors.grey[700]!,
+                ),
+                const SizedBox(height: 10),
                 CupertinoTextField(
                   controller: _titleController,
                   placeholder: "Title",
                   padding: const EdgeInsets.all(10.0),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color:
+                        theme == Brightness.light ? Colors.black : Colors.white,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: theme == Brightness.light
+                          ? Colors.grey[300]!
+                          : Colors.grey[700]!,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 CupertinoTextField(
                   controller: _contentController,
                   padding: const EdgeInsets.all(10.0),
+                  placeholder: "Content",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color:
+                        theme == Brightness.light ? Colors.black : Colors.white,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: theme == Brightness.light
+                          ? Colors.grey[300]!
+                          : Colors.grey[700]!,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                   maxLines: 30,
                 ),
               ],

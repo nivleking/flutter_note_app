@@ -67,7 +67,12 @@ class PinInputBox extends StatelessWidget {
             if (pinIsValid) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('PIN is successfully deleted!'),
+                  content: Text(
+                    'PIN is successfully deleted!',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                   backgroundColor: Colors.green,
                 ),
               );

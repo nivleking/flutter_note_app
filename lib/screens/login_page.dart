@@ -40,6 +40,8 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness theme = MediaQuery.of(context).platformBrightness;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -50,6 +52,17 @@ class LoginPageState extends State<LoginPage> {
           ),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(0.8),
+          child: Divider(
+            height: 8.0,
+            thickness: 0.3,
+            color:
+                theme == Brightness.light ? Colors.grey[300] : Colors.grey[700],
+          ),
+        ),
+        backgroundColor:
+            theme == Brightness.light ? Colors.white : Colors.grey[800]!,
       ),
       body: Center(
         child: Column(
@@ -62,12 +75,12 @@ class LoginPageState extends State<LoginPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 100.0),
+            const SizedBox(height: 81.0),
             const Icon(
               CupertinoIcons.lock,
               size: 50.0,
             ),
-            const SizedBox(height: 100.0),
+            const SizedBox(height: 81.0),
             Form(
               key: formKey,
               child: Padding(
@@ -79,13 +92,14 @@ class LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 100.0),
+            const SizedBox(height: 81.0),
             CupertinoButton(
               color: Colors.blue,
               child: Text(
                 "Validate",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
               onPressed: () {
@@ -93,7 +107,12 @@ class LoginPageState extends State<LoginPage> {
                 if (formKey.currentState!.validate()) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('PIN is correct!'),
+                      content: Text(
+                        'PIN is correct!',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -101,14 +120,18 @@ class LoginPageState extends State<LoginPage> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Invalid PIN!'),
+                      content: Text(
+                        'Invalid PIN!',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                       backgroundColor: Colors.red,
                     ),
                   );
                 }
               },
             ),
-            const SizedBox(height: 100.0),
           ],
         ),
       ),

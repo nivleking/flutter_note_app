@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness theme = MediaQuery.of(context).platformBrightness;
     return ValueListenableBuilder(
       valueListenable: myNotes.listenable(),
       builder: (context, Box<Note> notes, _) {
@@ -58,57 +59,46 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () async {
-                  final int? selectedColumnCount = await showDialog<int>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      int tempColumnCount = columnCount;
-                      return AlertDialog(
-                        title: Text('Set Column Count'),
-                        content: TextField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              hintText: "Enter number of columns"),
-                          onChanged: (value) {
-                            tempColumnCount =
-                                int.tryParse(value) ?? columnCount;
-                          },
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text('Cancel'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: Text('OK'),
-                            onPressed: () {
-                              Navigator.of(context).pop(tempColumnCount);
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-
-                  // If the dialog returns a value, update the state
-                  if (selectedColumnCount != null) {
-                    setState(() {
-                      columnCount = selectedColumnCount;
-                    });
-                  }
+              PopupMenuButton<int>(
+                onSelected: (int result) {
+                  setState(() {
+                    columnCount = result;
+                  });
                 },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                  const PopupMenuItem<int>(
+                    value: 2,
+                    child: Text('2 Columns'),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 3,
+                    child: Text('3 Columns'),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 4,
+                    child: Text('4 Columns'),
+                  ),
+                ],
               ),
               CustomPopMenu(),
             ],
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(8.0),
+              child: Divider(
+                height: 8.0,
+                color: theme == Brightness.light
+                    ? Colors.grey[300]
+                    : Colors.grey[800]!,
+                thickness: 0.3,
+              ),
+            ),
+            backgroundColor:
+                theme == Brightness.light ? Colors.white : Colors.grey[800]!,
           ),
           body: CustomScrollView(
             slivers: <Widget>[
               SliverPadding(
-                padding: EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(15.0),
                 sliver: SliverMasonryGrid.count(
                   crossAxisCount: columnCount,
                   mainAxisSpacing: 10,
