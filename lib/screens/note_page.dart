@@ -50,10 +50,7 @@ class _NotePageState extends State<NotePage> {
           formatDateCreated +
           '\n' +
           'Last edit: ' +
-          formatDateEdit +
-          '\n' +
-          note.content.length.toString() +
-          ' characters ';
+          formatDateEdit;
     }
     return '';
   }

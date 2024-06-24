@@ -17,9 +17,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Box<Note> myNotes;
-  final faker = Faker();
   String searchQuery = "";
-  int columnCount = 2; // Default column count
+  int columnCount = 2;
 
   @override
   void initState() {
